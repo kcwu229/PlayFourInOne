@@ -1,0 +1,37 @@
+table {
+  border-collapse: collapse;
+  border-color: black;
+  border-style: solid;
+}
+
+td {
+  background-color: rgb(251, 120, 49);
+  height: 100px;
+  width: 100px;
+}
+
+td :hover {
+  cursor: pointer;
+  background-color: rgb(234, 136, 39);
+  border-radius: 50%;
+}
+
+.circle {
+  height: 100px;
+  width: 100px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.circle.occupied.blue {
+  background-color: rgb(74, 174, 249);
+}
+
+.circle.occupied.yellow {
+  background-color: rgb(231, 231, 49);
+}
+
+#chessTable {
+  margin: auto;
+  width: 50%;
+}
