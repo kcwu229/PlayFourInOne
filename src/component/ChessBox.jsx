@@ -1,45 +1,45 @@
 import "../style/style.css";
-import { useState, useEffect } from "react";
-import { useContext } from "react";
-import { ChessContext, initialChessData } from "../utils/context/ChessContext";
 
-export default function ChessBox({ chess }) {
-  const {
-    chessData,
-    setChessData,
-    playerTurn,
-    setPlayerTurn,
-    checkWinner,
-    gameOver,
-    setGameOver,
-    switchTurn,
-  } = useContext(ChessContext);
+export default function ChessBox({
+  chessData,
+  chess,
+  updateChessData,
+  playerTurn,
+  switchTurn,
+  setGameOver,
+  checkWinner,
+  colIndex,
+}) {
+  const handleClickEvent = (playerTurn, hasOccupied) => {
+    const column = chessData[colIndex];
+    const remainingSpots = chessData.filter((item) => !item.occupied);
 
-  const handleClickEvent = (buttonId, playerTurn, hasOccupied) => {
-    const remainingSpot = chessData.filter((item) => !item.occupied);
-    if (!hasOccupied && remainingSpot.length > 0) {
-      //setPlayerTurn(!playerTurn);
-      setChessData((currentChessData) => {
-        const newChessData = currentChessData.map((item) =>
-          item.id === buttonId
-            ? {
-                ...item,
-                occupied: true,
-                color: playerTurn ? "yellow" : "blue",
-                isPlayer: playerTurn ? true : false,
-              }
-            : item
-        );
-        return newChessData;
-      });
+    if (!hasOccupied && remainingSpots.length > 0) {
+      const chessColumn = chessData[colIndex];
+      const emptySpot = chessColumn.filter((spot) => !spot.occupied);
+
+      if (emptySpot.length > 0) {
+        // return the bottom spot
+        const targetSpot = emptySpot[emptySpot.length - 1];
+        const targetRowIndex = column.indexOf(targetSpot);
+
+        const newChessData = {
+          ...targetSpot,
+          occupied: true,
+          isPlayer: true,
+          color: playerTurn ? "yellow" : "blue",
+        };
+
+        updateChessData(colIndex, targetRowIndex, newChessData);
+        switchTurn();
+      }
     } else if (hasOccupied) {
       alert("This box is occupied !! Please find another box !");
-    } else {
+    } else if (remainingSpots.length == 0) {
       alert("Game Over !");
       setGameOver((gameOver) => !gameOver);
     }
     checkWinner();
-    if (playerTurn == true) switchTurn();
   };
 
   return (
@@ -48,7 +48,7 @@ export default function ChessBox({ chess }) {
       key={chess.id}
       data-id={chess.id}
       onClick={(e) => {
-        handleClickEvent(chess.id, playerTurn, chess.occupied);
+        handleClickEvent(playerTurn, chess.occupied);
       }}
     >
       {chess.id}

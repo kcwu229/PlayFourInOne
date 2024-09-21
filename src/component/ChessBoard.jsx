@@ -1,13 +1,21 @@
 import "../style/style.css";
 import { useContext } from "react";
 import { ChessContext, initialChessData } from "../utils/context/ChessContext";
-import ChessBox from "../component/ChessBox";
+import ChessBox from "./ChessBox";
 
-export default function ChessBoard() {
-  const { chessData, setChessData, playerTurn, setPlayerTurn } =
-    useContext(ChessContext);
+export default function ChessBoard({
+  chessData,
+  updateChessData,
+  playerTurn,
+  switchTurn,
+  gameOver,
+  setGameOver,
+  checkWinner,
+}) {
+  //console.log(chessData);
   const rows = 6;
   const cols = 7;
+
   return (
     <div>
       <table id="chessTable">
@@ -15,12 +23,21 @@ export default function ChessBoard() {
           {[...Array(rows)].map((_, rowIndex) => (
             <tr key={rowIndex}>
               {[...Array(cols)].map((_, colIndex) => {
-                const chessIndex = rowIndex * cols + colIndex;
-                const chess = chessData[chessIndex];
+                const chess = chessData[colIndex][rowIndex];
+
                 return (
-                  <td key={colIndex}>
+                  <td key={chess.id}>
                     <div>
-                      <ChessBox chess={chess} />
+                      <ChessBox
+                        chessData={chessData}
+                        chess={chess}
+                        updateChessData={updateChessData}
+                        playerTurn={playerTurn}
+                        switchTurn={switchTurn}
+                        setGameOver={setGameOver}
+                        checkWinner={checkWinner}
+                        colIndex={colIndex}
+                      />
                     </div>
                   </td>
                 );

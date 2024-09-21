@@ -1,13 +1,22 @@
 import { createContext, useState } from "react";
 
-export const initialChessData = Array(42)
+const rows = 6;
+const cols = 7;
+
+export const initialChessData = Array(cols)
   .fill(null)
-  .map((_, index) => ({
-    id: index,
-    isPlayer: false,
-    occupied: false,
-    color: "",
-  }));
+  .map((_, colIndex) =>
+    Array(rows)
+      .fill(null)
+      .map((_, rowIndex) => ({
+        id: colIndex * rows + rowIndex + 1,
+        isPlayer: false,
+        occupied: false,
+        rowIndex: rowIndex,
+        colIndex: colIndex,
+        color: "",
+      }))
+  );
 
 const playerTurn = true;
 
@@ -17,3 +26,5 @@ export const ChessContext = createContext({
   playerTurn: playerTurn,
   setPlayerTurn: () => {},
 });
+
+// [], [], [], [], [], [],

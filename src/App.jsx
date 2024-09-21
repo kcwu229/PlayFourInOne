@@ -18,9 +18,7 @@ function App() {
   };
 
   const checkWinner = () => {
-    "a" === 22232
-      ? setGameOver(!gameOver)
-      : console.log("No winner at this moment");
+    
   };
 
   const resetGame = () => {
@@ -29,55 +27,69 @@ function App() {
     setGameOver(false);
   };
 
+  const updateChessData = (colIndex, rowIndex, newChessData) => {
+    setChessData((currentChessData) =>
+      currentChessData.map((col, cIndex) =>
+        cIndex === colIndex
+          ? col.map((chess, rIndex) =>
+              rIndex === rowIndex ? newChessData : chess
+            )
+          : col
+      )
+    );
+  };
+
   const computerTurn = () => {
-    const emptySpots = chessData.filter((spot) => !spot.occupied);
+    const emptySpots = [];
+    let count = 0;
+    chessData.forEach((column, colIndex) => {
+      const emptySpot = column.findLast((spot) => !spot.occupied);
+      if (emptySpot) {
+        emptySpots.push({
+          colIndex,
+          rowIndex: column.indexOf(emptySpot),
+          spot: emptySpot,
+        });
+      }
+    });
     if (emptySpots.length > 0) {
-      const emptySpot =
-        emptySpots[Math.floor(Math.random() * emptySpots.length)];
-      setChessData((chessData) => {
-        const newChessData = chessData.map((item) =>
-          item.id === emptySpot.id
-            ? {
-                occupied: true,
-                isPlayer: false,
-                color: playerTurn ? "yellow" : "blue",
-              }
-            : item
-        );
-        return newChessData;
+      const randomIndex = Math.floor(Math.random() * emptySpots.length);
+      const randomSpot = emptySpots[randomIndex];
+      console.log("电脑选择的位置：", randomIndex);
+
+      updateChessData(randomSpot.colIndex, randomSpot.rowIndex, {
+        ...randomSpot.spot,
+        occupied: true,
+        isPlayer: false,
+        color: playerTurn ? "yellow" : "blue",
       });
+      count += 1;
       switchTurn();
+      console.log("Now is " + count);
     } else {
-      setGameOver((gameOver) => !gameOver);
-      alert("Game Over !");
+      alert("Computer Lose !!!");
+      console.log("Game Over");
+      setGameOver(true);
     }
   };
 
-  useEffect(() => {
-    if (playerTurn == false && !gameOver) {
-      computerTurn();
-    }
-  }, [playerTurn, gameOver, chessData]);
+  if (playerTurn == false && !gameOver) {
+    computerTurn();
+  }
 
   return (
-    <ChessContext.Provider
-      value={{
-        chessData,
-        setChessData,
-        playerTurn,
-        setPlayerTurn,
-        switchTurn,
-        gameOver,
-        setGameOver,
-        checkWinner,
-        resetGame,
-      }}
-    >
-      <div className="App">
-        <ChessBoard />
-        {gameOver ? <button onClick={resetGame}>Play Again</button> : <></>}
-      </div>
-    </ChessContext.Provider>
+    <div className="App">
+      <ChessBoard
+        chessData={chessData}
+        updateChessData={updateChessData}
+        playerTurn={playerTurn}
+        switchTurn={switchTurn}
+        gameOver={gameOver}
+        setGameOver={setGameOver}
+        checkWinner={checkWinner}
+      />
+      {gameOver ? <button onClick={resetGame}>Play Again</button> : <></>}
+    </div>
   );
 }
 
